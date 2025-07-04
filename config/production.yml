@@ -1,0 +1,11 @@
+env: "production"
+
+http_server:
+  address: "0.0.0.0:8080"
+  base_url: ${BASE_URL}
+  timeout: 10s
+  idle_timeout: 120s
+
+grpc_client:
+  backend_address: ${GRPC_BACKEND_ADDRESS}
+  timeout: 10s

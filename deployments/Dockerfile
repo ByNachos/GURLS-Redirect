@@ -14,7 +14,7 @@ ARG TARGETARCH
 RUN CGO_ENABLED=0 GOOS=linux GOARCH=${TARGETARCH:-amd64} go build \
     -ldflags="-s -w" \
     -trimpath \
-    -o service ./cmd/app
+    -o service ./cmd/redirect
 
 # Stage 2: Production runtime
 FROM gcr.io/distroless/static-debian12:nonroot AS final
@@ -23,11 +23,9 @@ WORKDIR /app
 
 # Копируем бинарник
 COPY --from=builder /app/service .
-COPY --from=builder /app/assets ./assets
-COPY --from=builder /app/api/ ./api/
-
-# Копируем конфигурацию (опционально, только если нужно)
-COPY --from=builder /app/config/ ./config/
+COPY --from=builder /app/assets* /app/  || true
+COPY --from=builder /app/api*    /app/  || true
+COPY --from=builder /app/config* /app/  || true
 
 EXPOSE 8080
 CMD ["/app/service"]
